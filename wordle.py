@@ -40,7 +40,7 @@ class Wordle:
                 self.state["guesses"] = []
             elif guess == self.load_word():
                 self.state["word_index"] += 1
-                self.state["guesses"] = []
+                self.state["guesses"].append(guess)
 
 
             json.dump(self.state, f)
@@ -51,6 +51,7 @@ class Wordle:
         for i, letter in enumerate(guess):
             if letter == target_word[i]:
                 res.append(colored(letter, 'green'))
+                target_word = target_word[:i] + " " +  target_word[i+1:]
             elif letter in target_word:
                 res.append(colored(letter, 'yellow'))
             else:
@@ -58,6 +59,7 @@ class Wordle:
         return " ".join(res)
 
     def get_guesses(self):
+        self.load_state()
         return self.state["guesses"]
 
     def new_word(self):
@@ -78,9 +80,16 @@ class Wordle:
             print(f"Guess {len(self.state['guesses'])} of {len(target_word)}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Play Wordle')
-    parser.add_argument('guess', type=str, help='Your five-letter guess')
+    parser = argparse.ArgumentParser(description="Play Wordle")
+    parser.add_argument("guess", type=str, nargs="?", help="Your five-letter guess")
+    parser.add_argument("-g", "--get-guesses", action="store_true", help="Get all guesses")
     args = parser.parse_args()
     wordle = Wordle()
-    wordle.play_wordle(args.guess)
-    wordle.save_state(args.guess)
+
+    # Invoked with -g or --get-guesses
+    if args.get_guesses:
+        print(wordle.get_guesses())
+    else:
+        # Guess was entered
+        wordle.play_wordle(args.guess)
+        wordle.save_state(args.guess)
