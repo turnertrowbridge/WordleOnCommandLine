@@ -60,13 +60,18 @@ class Wordle:
 
     def get_guesses(self):
         self.load_state()
-        return self.state["guesses"]
+        for guess in self.state["guesses"]:
+            print(self.eval_guess(guess))
 
     def new_word(self):
         self.state["word_index"] = 0
         self.state["guesses"] = []
 
     def play_wordle(self, guess):
+        if len(guess) != 5 or not guess.isalpha():
+            print("Your guess must be five letters long.")
+            return
+        guess = guess.lower()
         target_word = self.load_word()
         res = self.eval_guess(guess)
         print(res)
@@ -74,21 +79,21 @@ class Wordle:
         if guess == target_word:
             print('Congratulations! You won!')
         elif len(self.state["guesses"]) == len(target_word):
-            print(f'You lost! The word was {target_word}')
+            print(f'You lost! The word was {target_word}.')
             self.new_word()
         else:
             print(f"Guess {len(self.state['guesses'])} of {len(target_word)}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Play Wordle")
-    parser.add_argument("guess", type=str, nargs="?", help="Your five-letter guess")
-    parser.add_argument("-g", "--get-guesses", action="store_true", help="Get all guesses")
+    parser.add_argument("guess", type=str, nargs="?", help="Your five-letter guess.")
+    parser.add_argument("-g", "--get-guesses", action="store_true", help="Get all guesses.")
     args = parser.parse_args()
     wordle = Wordle()
 
     # Invoked with -g or --get-guesses
     if args.get_guesses:
-        print(wordle.get_guesses())
+        wordle.get_guesses()
     else:
         # Guess was entered
         wordle.play_wordle(args.guess)
