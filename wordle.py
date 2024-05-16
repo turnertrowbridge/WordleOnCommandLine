@@ -29,7 +29,7 @@ class Wordle:
                 words = json.load(f)
         else:
             with open(self.words_file, "w") as f:
-                words = ["apple", "baked", "chairs", "sours", "juice", "pasta", "pizza", "sugar", "syrup", "water"]
+                words = ["apple", "baked", "chair", "sours", "juice", "pasta", "pizza", "sugar", "syrup", "water"]
                 json.dump(words, f)
         return words[self.state["word_index"]]
 
